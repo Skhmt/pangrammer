@@ -1,0 +1,84 @@
+<html>
+<head>
+	<title>Pangrammer</title>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+	<style>
+		.used2 {
+			font-style: italic;
+			color: red;
+			font-size: 10pt;
+		}
+
+		.used1 {
+			font-style: italic;
+			color: gray;
+			font-size: 10pt;
+		}
+
+		.notused {
+			font-weight: bold;
+			color: blue;
+			font-size: 16pt;
+		}
+	</style>
+</head>
+<body>
+	<div id="app">
+		<input type="text" v-model="textData" @input="updateAlphabet" style="width: 500px;">
+		<div>Alphabetical: <span v-html="alphabetHTML"></span></div>
+		<div>Frequency: <span v-html="freqAlphaHTML"></span></div>
+		<div>Vowels: <span v-html="vowelHTML"></span></div>
+
+		<div>Letter count: {{textData.replace(/[\s\:\;\,\'\"\!\.\$]/g, '').length}}</div>
+		<div>Total count: {{textData.length}}</div>
+	</div>
+	<script>
+	const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
+	const freqAlpha = 'etaoinshrdlcumwfgypbvkjxqz'.split('').reverse();
+	const vowels = 'aeiouy'.split('');
+
+	const app = new Vue({
+		el: '#app',
+		data: {
+			textData: '',
+			alphabetHTML: '',
+			freqAlphaHTML: '',
+			vowelHTML: '',
+		},
+		methods: {
+			updateAlphabet() {
+				const lowerTextData = this.textData.toLowerCase();
+
+				this.alphabetHTML = findLetters(lowerTextData, alphabet);
+
+				this.freqAlphaHTML = findLetters(lowerTextData, freqAlpha);
+
+				this.vowelHTML = findLetters(lowerTextData, vowels);
+			}
+		}
+	});
+
+	function findLetters(text, letterSet) {
+		let temp = '';
+		for (let a of letterSet) {
+			let tempClass;
+			const re = new RegExp(a, 'g');
+			const match = text.match(re);
+			const numMatches = match ? match.length : 0;
+			if (numMatches > 1) {
+				tempClass = 'used2';
+			} else if (numMatches == 1) {
+				tempClass = 'used1';
+			} else {
+				tempClass = 'notused';
+			}
+			
+			temp += `<span class="${tempClass}">${a.toUpperCase()}</span>&nbsp;`;
+		}
+		return temp;
+	}
+
+	app.updateAlphabet();
+	</script>
+</body>
+</html>
